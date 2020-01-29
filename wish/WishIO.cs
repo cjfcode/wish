@@ -10,7 +10,7 @@ namespace Wish
     public static class WishIO
     {
         /// <summary>
-        /// Sets up IO and calls IO functions.
+        /// Begins the IO process.
         /// </summary>
         public static void Begin()
         {
@@ -31,7 +31,7 @@ namespace Wish
             string title = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
             string version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
             string programInfo = $"{title} v{version}\n";
-            string usageInformationHeader = $"Usage Information\n=================";
+            string usageInformationHeader = $"About Wish\n==========";
             string aboutInfo = $"This program parses public Steam wishlists and outputs the result as an alphabetically-sorted text file.";
             string fileLocationInfo = "The output file will be located in the same directory as the program executable.";
             string usageCondition = $"The wishlist or profile must be PUBLIC.\n";
@@ -47,7 +47,7 @@ namespace Wish
         /// <summary>
         /// Takes input from the user.
         /// </summary>
-        /// <param name="first">Represents whether the user has been prompted for input previously.</param>
+        /// <param name="first">Represents whether the user has been prompted for input for the first time.</param>
         private static void PromptUserForInput(bool first)
         {
             string promptUserForSteamID = "Please enter a SteamID: ";
@@ -108,9 +108,7 @@ namespace Wish
                         SteamApiAccess.SetApiUrl(SteamApiAccess.GetNextPage());
                         data = client.DownloadString(SteamApiAccess.GetApiUrl());
 
-                        if (data.Contains("name"))
-                            continue;
-                        else
+                        if (!data.Contains("name"))
                             break;
                     }
 
@@ -125,12 +123,12 @@ namespace Wish
         }
 
         /// <summary>
-        /// Enumerates the data array, writing the results to the console.
+        /// Enumerates the collection, writing the results to the console.
         /// </summary>
-        /// <param name="data">The data array to display.</param>
-        private static void DisplayOutput(string[] data)
+        /// <param name="gameCollection">The collection to display.</param>
+        private static void DisplayOutput(string[] gameCollection)
         {
-            foreach (string gameTitle in data)
+            foreach (string gameTitle in gameCollection)
                 Console.WriteLine(gameTitle);
 
             Console.WriteLine("\nWriting completed. Press any key to exit...");
@@ -144,8 +142,7 @@ namespace Wish
         {
             WishData.SetAllData(File.ReadAllLines(WishData.GetPath()));
             Array.Sort(WishData.GetAllData());
-            string allData = string.Join("\n", WishData.GetAllData());
-            File.WriteAllText(WishData.GetPath(), allData);
+            File.WriteAllText(WishData.GetPath(), string.Join("\n", WishData.GetAllData()));
         }
     }
 }
