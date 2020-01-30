@@ -31,41 +31,41 @@ namespace Wish
             string title = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
             string version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
             string programInfo = $"{title} v{version}\n";
-            string usageInformationHeader = $"About Wish\n==========";
-            string aboutInfo = $"This program parses public Steam wishlists and outputs the result as an alphabetically-sorted text file.";
+            string infoHeader = "About Wish\n==========";
+            string aboutInfo = "This program parses public Steam wishlists and outputs the result as an alphabetically-sorted text file.";
             string fileLocationInfo = "The output file will be located in the same directory as the program executable.";
-            string usageCondition = $"The wishlist or profile must be PUBLIC.\n";
+            string conditions = "The wishlist or profile must be PUBLIC.\n";
             string exitInfo = "Send \'exit\' as input to quit.\n";
             Console.WriteLine(programInfo);
-            Console.WriteLine(usageInformationHeader);
+            Console.WriteLine(infoHeader);
             Console.WriteLine(aboutInfo);
             Console.WriteLine(fileLocationInfo);
-            Console.WriteLine(usageCondition);
+            Console.WriteLine(conditions);
             Console.WriteLine(exitInfo);
         }
 
         /// <summary>
         /// Takes input from the user.
         /// </summary>
-        /// <param name="first">Represents whether the user has been prompted for input for the first time.</param>
-        private static void PromptUserForInput(bool first)
+        /// <param name="firstTimePrompt">Represents whether the user has been prompted for input for the first time.</param>
+        private static void PromptUserForInput(bool firstTimePrompt)
         {
             string promptUserForSteamID = "Please enter a SteamID: ";
             string promptUserForSteamIDOnError = "\nThe SteamID you have entered is invalid.\n\nPlease enter a valid steam ID: ";
-            string prompt = first ? promptUserForSteamID : promptUserForSteamIDOnError;
-            string input;
+            string promptContent = firstTimePrompt ? promptUserForSteamID : promptUserForSteamIDOnError;
+            string userInput;
 
             do
             {
-                Console.Write(prompt);
-                input = Console.ReadLine();
+                Console.Write(promptContent);
+                userInput = Console.ReadLine();
 
-                if (input.Equals("exit"))
+                if (userInput.Equals("exit"))
                     Environment.Exit(0);
 
-            } while (!long.TryParse(input, out _));
+            } while (!long.TryParse(userInput, out _));
 
-            SteamApiAccess.SetSteamID(input);
+            SteamApiAccess.SetSteamID(userInput);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Wish
             Console.WriteLine("\nFetching data from the server. This process could take awhile for large wishlists, please wait...\n");
 
             using (StreamWriter streamWriter = new StreamWriter(path))
-            {            
+            {
                 while (true)
                 {
                     if (!data.Contains("name"))
